@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcda461e9714e8e980ac2a559e165d2, type: 3}
+  m_Name: TileSpriteConfig
+  m_EditorClassIdentifier: 
+  left:
+    normal: {fileID: 21300000, guid: a4e896bd3dd76f54a8fd283bcfdd639e, type: 3}
+    rapid: {fileID: 21300000, guid: 0853aea8586e57f42b77d1700169c73c, type: 3}
+    strong: {fileID: 21300000, guid: 8bc5efba3c64f0d4bac265618206a414, type: 3}
+    breakSprite: {fileID: 21300000, guid: 11dc50aa4444e8a42adcd6af828247e4, type: 3}
+  right:
+    normal: {fileID: 21300000, guid: b63f9cdcc3ea4974aaff083968160717, type: 3}
+    rapid: {fileID: 21300000, guid: d692255e4cafa4646af76d1b71081541, type: 3}
+    strong: {fileID: 21300000, guid: 4b159e072b9fc8846aa21a145b182353, type: 3}
+    breakSprite: {fileID: 21300000, guid: fa7f5d39ddbd02a4cb173ac9e7b9eed5, type: 3}
+  normalScore: 2
+  rapidScore: 2
+  strongScore: 10
+  breakScore: 0
