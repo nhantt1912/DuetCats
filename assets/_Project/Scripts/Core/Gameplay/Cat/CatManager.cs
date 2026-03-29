@@ -1,9 +1,13 @@
+using System;
 using UnityEngine;
 
 public class CatManager : MonoBehaviour
 {
     [SerializeField] private CatController _catLeftController;
     [SerializeField] private CatController _catRightController;
+    [SerializeField] private float longEatDurationThreshold = 0.2f;
+
+    public event Action OnWinAnimationFinished;
 
     public void PlayLoseAnimation(Tile failedTile)
     {
@@ -20,14 +24,32 @@ public class CatManager : MonoBehaviour
 
     public void PlayWinAnimation()
     {
+        int pendingWinCompleteCount = 0;
+
+        void HandleWinComplete()
+        {
+            pendingWinCompleteCount--;
+            if (pendingWinCompleteCount <= 0)
+            {
+                OnWinAnimationFinished?.Invoke();
+            }
+        }
+
         if (_catLeftController != null)
         {
-            _catLeftController.PlayWin();
+            pendingWinCompleteCount++;
+            _catLeftController.PlayWin(HandleWinComplete);
         }
 
         if (_catRightController != null)
         {
-            _catRightController.PlayWin();
+            pendingWinCompleteCount++;
+            _catRightController.PlayWin(HandleWinComplete);
+        }
+
+        if (pendingWinCompleteCount == 0)
+        {
+            OnWinAnimationFinished?.Invoke();
         }
     }
 
@@ -42,11 +64,11 @@ public class CatManager : MonoBehaviour
 
         if (Mathf.Abs(catX - tileX) <= hitToleranceX)
         {
-            float ts = tile.Data.ts;
+            float noteDuration = tile.Data.d;
 
-            if (ts > 0.01f)
+            if (noteDuration > longEatDurationThreshold)
             {
-                targetCat.PlayEatLong(ts);
+                targetCat.PlayEatLong(noteDuration);
             }
             else
             {

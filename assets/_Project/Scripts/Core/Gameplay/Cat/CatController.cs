@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Spine.Unity;
@@ -74,7 +75,7 @@ public class CatController : MonoBehaviour
         _catSpine.PlayAnimation(CAT_LOSE, mixDuration: 0.1f, loop: false);
     }
 
-    public void PlayWin()
+    public void PlayWin(Action onComplete = null)
     {
         if (_currentEatRoutine != null)
         {
@@ -82,7 +83,7 @@ public class CatController : MonoBehaviour
             _currentEatRoutine = null;
         }
 
-        _catSpine.PlayAnimation(CAT_WIN, mixDuration: 0.1f, loop: false);
+        _catSpine.PlayAnimation(CAT_WIN, mixDuration: 0.1f, loop: false, onComplete: onComplete);
     }
 
     private IEnumerator EatLongRoutine(float duration)

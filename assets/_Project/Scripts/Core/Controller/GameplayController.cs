@@ -10,6 +10,7 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private CatManager _catManager;
     [SerializeField] private ScoreManager _scoreManager;
     [SerializeField] private TutorialPanelController _tutorialPanelController;
+    [SerializeField] private SelectSongController _selectSongController;
     [Header("Game Rules")]
     [SerializeField] private float hitToleranceX = 0.8f; // X-distance tolerance for a successful hit
 
@@ -20,13 +21,25 @@ public class GameplayController : MonoBehaviour
     {
         _tileManager.OnTileHitZone += HandleTileReachHitZone;
         _tileManager.OnLose += HandleLose;
+
+        if (_catManager != null)
+        {
+            _catManager.OnWinAnimationFinished += HandleWinAnimationFinished;
+        }
     }
 
     private void OnDestroy()
     {
-        if (_tileManager == null) return;
-        _tileManager.OnTileHitZone -= HandleTileReachHitZone;
-        _tileManager.OnLose -= HandleLose;
+        if (_tileManager != null)
+        {
+            _tileManager.OnTileHitZone -= HandleTileReachHitZone;
+            _tileManager.OnLose -= HandleLose;
+        }
+
+        if (_catManager != null)
+        {
+            _catManager.OnWinAnimationFinished -= HandleWinAnimationFinished;
+        }
     }
 
     private void Update()
@@ -84,6 +97,11 @@ public class GameplayController : MonoBehaviour
 
         _hasTriggeredWin = true;
         _catManager.PlayWinAnimation();
+    }
+
+    private void HandleWinAnimationFinished()
+    {
+        _selectSongController.Show();
     }
 
     private static bool TryConsumeStartTap()
