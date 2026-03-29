@@ -25,7 +25,39 @@ public class DualInputHandler : MonoBehaviour
 
     private void Update()
     {
+        if (Input.touchCount > 0)
+        {
+            HandleTouches();
+            return;
+        }
+
         HandleMouse();
+    }
+
+    private void HandleTouches()
+    {
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            Touch touch = Input.GetTouch(i);
+            int id = touch.fingerId;
+            float x = touch.position.x;
+
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    AssignFinger(id, x);
+                    break;
+                case TouchPhase.Moved:
+                case TouchPhase.Stationary:
+                    UpdateFinger(id, x);
+                    break;
+                case TouchPhase.Ended:
+                case TouchPhase.Canceled:
+                    _fingerSides.Remove(id);
+                    _lastPosX.Remove(id);
+                    break;
+            }
+        }
     }
 
     private void HandleMouse()
@@ -37,7 +69,10 @@ public class DualInputHandler : MonoBehaviour
             UpdateFinger(0, Input.mousePosition.x);
 
         if (Input.GetMouseButtonUp(0))
+        {
             _fingerSides.Remove(0);
+            _lastPosX.Remove(0);
+        }
     }
 
     private void AssignFinger(int id, float x)
