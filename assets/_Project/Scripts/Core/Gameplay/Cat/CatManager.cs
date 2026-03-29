@@ -5,56 +5,103 @@ public class CatManager : MonoBehaviour
 {
     [SerializeField] private CatController _catLeftController;
     [SerializeField] private CatController _catRightController;
-    [SerializeField] private float longEatDurationThreshold = 0.2f;
+    [SerializeField] private float _longEatDurationThreshold = 0.2f;
 
-    public event Action OnWinAnimationFinished;
+    public event Action<bool> OnAnyCatEatingStateChanged;
 
-    public void PlayLoseAnimation(Tile failedTile)
+    public bool AreAnyCatsEating =>
+        (_catLeftController != null && _catLeftController.IsEating) ||
+        (_catRightController != null && _catRightController.IsEating);
+
+    private void OnEnable()
+    {
+        SubscribeEatingStateEvents();
+        NotifyAnyCatEatingStateChanged();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeEatingStateEvents();
+    }
+
+    private void SubscribeEatingStateEvents()
     {
         if (_catLeftController != null)
         {
-            _catLeftController.PlayLose();
+            _catLeftController.OnStateChanged += HandleCatStateChanged;
         }
 
         if (_catRightController != null)
         {
-            _catRightController.PlayLose();
+            _catRightController.OnStateChanged += HandleCatStateChanged;
         }
     }
 
-    public void PlayWinAnimation()
+    private void UnsubscribeEatingStateEvents()
     {
-        int pendingWinCompleteCount = 0;
-
-        void HandleWinComplete()
-        {
-            pendingWinCompleteCount--;
-            if (pendingWinCompleteCount <= 0)
-            {
-                OnWinAnimationFinished?.Invoke();
-            }
-        }
-
         if (_catLeftController != null)
         {
-            pendingWinCompleteCount++;
-            _catLeftController.PlayWin(HandleWinComplete);
+            _catLeftController.OnStateChanged -= HandleCatStateChanged;
         }
 
         if (_catRightController != null)
         {
-            pendingWinCompleteCount++;
-            _catRightController.PlayWin(HandleWinComplete);
-        }
-
-        if (pendingWinCompleteCount == 0)
-        {
-            OnWinAnimationFinished?.Invoke();
+            _catRightController.OnStateChanged -= HandleCatStateChanged;
         }
     }
 
+    private void HandleCatStateChanged(CatController.CatState _)
+    {
+        NotifyAnyCatEatingStateChanged();
+    }
 
-    public bool TryEatTile(Tile tile, float hitToleranceX)
+    private void NotifyAnyCatEatingStateChanged()
+    {
+        OnAnyCatEatingStateChanged?.Invoke(AreAnyCatsEating);
+    }
+
+    public void PlayLoseAnimation()
+    {
+        if (_catLeftController != null)
+        {
+            _catLeftController.PlayAnimationLose();
+        }
+
+        if (_catRightController != null)
+        {
+            _catRightController.PlayAnimationLose();
+        }
+    }
+
+    public void PlayAnimationCatWin()
+    {
+        if (_catLeftController != null)
+        {
+            _catLeftController.PlayAnimationWin();
+        }
+
+        if (_catRightController != null)
+        {
+            _catRightController.PlayAnimationWin();
+        }
+    }
+
+    public void ResetCatsToIdle()
+    {
+        if (_catLeftController != null)
+        {
+            _catLeftController.ResetToIdle();
+        }
+
+        if (_catRightController != null)
+        {
+            _catRightController.ResetToIdle();
+        }
+
+        NotifyAnyCatEatingStateChanged();
+    }
+
+    public bool TryEatTile(Tile tile, float hitToleranceX,Action OnEatComplete = null)
     {
         int pid = tile.Data.pid;
         CatController targetCat = (pid == 0 || pid == 2) ? _catLeftController : _catRightController;
@@ -66,7 +113,7 @@ public class CatManager : MonoBehaviour
         {
             float noteDuration = tile.Data.d;
 
-            if (noteDuration > longEatDurationThreshold)
+            if (noteDuration > _longEatDurationThreshold)
             {
                 targetCat.PlayEatLong(noteDuration);
             }
@@ -81,4 +128,16 @@ public class CatManager : MonoBehaviour
         return false; 
     }
     
+    public void PlayListeningAnimation()
+    {
+        if (_catLeftController != null)
+        {
+            _catLeftController.PlayAnimationListening();
+        }
+
+        if (_catRightController != null)
+        {
+            _catRightController.PlayAnimationListening();
+        }
+    }
 }

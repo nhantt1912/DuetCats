@@ -31,18 +31,18 @@ namespace _Project.Scripts.Core.Gameplay.Tile
         }
 
         [Header("Lane Sprite Sets")]
-        [SerializeField] private LaneSprites left;
-        [SerializeField] private LaneSprites right;
+        [SerializeField] private LaneSprites _left;
+        [SerializeField] private LaneSprites _right;
 
         [Header("Score Rules")]
-        [SerializeField] private int normalScore = 2;
-        [SerializeField] private int rapidScore = 2;
-        [SerializeField] private int strongScore = 10;
-        [SerializeField] private int breakScore = 0;
+        [SerializeField] private int _normalScore = 2;
+        [SerializeField] private int _rapidScore = 2;
+        [SerializeField] private int _strongScore = 10;
+        [SerializeField] private int _breakScore = 0;
 
         public Sprite GetSprite(bool isLeft, TileSprite tileSprite)
         {
-            return isLeft ? left.Get(tileSprite) : right.Get(tileSprite);
+            return isLeft ? _left.Get(tileSprite) : _right.Get(tileSprite);
         }
 
         public int GetScore(TileSprite tileSprite)
@@ -50,13 +50,13 @@ namespace _Project.Scripts.Core.Gameplay.Tile
             switch (tileSprite)
             {
                 case TileSprite.Strong:
-                    return strongScore;
+                    return _strongScore;
                 case TileSprite.Rapid:
-                    return rapidScore;
+                    return _rapidScore;
                 case TileSprite.Break:
-                    return breakScore;
+                    return _breakScore;
                 default:
-                    return normalScore;
+                    return _normalScore;
             }
         }
     }

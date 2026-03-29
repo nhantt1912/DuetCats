@@ -4,15 +4,15 @@ using UnityEngine;
 public class DualInputHandler : MonoBehaviour
 {
     [Header("Refs")]
-    [SerializeField] private CatController leftCat;
-    [SerializeField] private CatController rightCat;
+    [SerializeField] private CatController _leftCat;
+    [SerializeField] private CatController _rightCat;
 
     [Header("Config")]
-    [SerializeField] private float deadZone = 30f;
+    [SerializeField] private float _deadZone = 30f;
 
-    private Dictionary<int, InputSide> fingerSides = new();
+    private Dictionary<int, InputSide> _fingerSides = new();
     
-    private Dictionary<int, float> lastPosX = new();
+    private Dictionary<int, float> _lastPosX = new();
 
     private float _midX;
     private float _halfWidth;
@@ -37,35 +37,35 @@ public class DualInputHandler : MonoBehaviour
             UpdateFinger(0, Input.mousePosition.x);
 
         if (Input.GetMouseButtonUp(0))
-            fingerSides.Remove(0);
+            _fingerSides.Remove(0);
     }
 
     private void AssignFinger(int id, float x)
     {
-        if (x < _midX - deadZone)
-            fingerSides[id] = InputSide.Left;
-        else if (x > _midX + deadZone)
-            fingerSides[id] = InputSide.Right;
+        if (x < _midX - _deadZone)
+            _fingerSides[id] = InputSide.Left;
+        else if (x > _midX + _deadZone)
+            _fingerSides[id] = InputSide.Right;
 
-        lastPosX[id] = x;
+        _lastPosX[id] = x;
     }
 
     private void UpdateFinger(int id, float x)
     {
-        if (!fingerSides.TryGetValue(id, out var side)) return;
+        if (!_fingerSides.TryGetValue(id, out var side)) return;
 
-        float deltaX = x - lastPosX[id];
-        lastPosX[id] = x;
+        float deltaX = x - _lastPosX[id];
+        _lastPosX[id] = x;
 
         if (side == InputSide.Left)
         {
             float t = Mathf.Clamp01(x / _halfWidth);
-            leftCat.MoveNormalized(t, deltaX);
+            _leftCat.MoveNormalized(t, deltaX);
         }
         else
         {
             float t = Mathf.Clamp01((x - _midX) / _halfWidth);
-            rightCat.MoveNormalized(t, deltaX);
+            _rightCat.MoveNormalized(t, deltaX);
         }
     }
 }

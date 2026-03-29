@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    [SerializeField] private TileSpriteConfig tileSpriteConfig;
+    [SerializeField] private TileSpriteConfig _tileSpriteConfig;
 
     public event Action<int> OnScoreChanged;
 
@@ -40,13 +40,13 @@ public class ScoreManager : MonoBehaviour
 
     private int ResolveScore(TileSprite tileSprite)
     {
-        if (tileSpriteConfig == null)
+        if (_tileSpriteConfig == null)
         {
             Debug.LogError("TileSpriteConfig is not assigned on ScoreManager.");
             return 0;
         }
 
-        return tileSpriteConfig.GetScore(tileSprite);
+        return _tileSpriteConfig.GetScore(tileSprite);
     }
 
     private void NotifyScoreChanged()

@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private ScoreManager scoreManager;
-    [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField, Min(1f)] private float scorePunchScale = 1.15f;
-    [SerializeField, Min(0.01f)] private float scorePunchDuration = 0.15f;
+    [SerializeField] private ScoreManager _scoreManager;
+    [SerializeField] private TextMeshProUGUI _scoreText;
+    [SerializeField, Min(1f)] private float _scorePunchScale = 1.15f;
+    [SerializeField, Min(0.01f)] private float _scorePunchDuration = 0.15f;
 
     private Coroutine _scorePunchCoroutine;
     private Vector3 _scoreTextBaseScale = Vector3.one;
@@ -14,33 +14,33 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        if (scoreText != null)
+        if (_scoreText != null)
         {
-            _scoreTextBaseScale = scoreText.rectTransform.localScale;
+            _scoreTextBaseScale = _scoreText.rectTransform.localScale;
         }
     }
 
     private void OnEnable()
     {
-        if (scoreManager == null)
+        if (_scoreManager == null)
         {
             SetScoreText(0, false);
             return;
         }
 
-        scoreManager.OnScoreChanged += OnScoreChanged;
-        SetScoreText(scoreManager.CurrentScore, false);
+        _scoreManager.OnScoreChanged += OnScoreChanged;
+        SetScoreText(_scoreManager.CurrentScore, false);
     }
 
     private void OnDisable()
     {
-        if (scoreManager == null)
+        if (_scoreManager == null)
         {
             ResetScoreTextScale();
             return;
         }
 
-        scoreManager.OnScoreChanged -= OnScoreChanged;
+        _scoreManager.OnScoreChanged -= OnScoreChanged;
         ResetScoreTextScale();
     }
 
@@ -51,12 +51,12 @@ public class UIManager : MonoBehaviour
 
     private void SetScoreText(int score, bool allowPunch)
     {
-        if (scoreText == null)
+        if (_scoreText == null)
         {
             return;
         }
 
-        scoreText.text = score.ToString();
+        _scoreText.text = score.ToString();
         bool shouldPunch = allowPunch && _lastScore != int.MinValue && score != _lastScore;
         _lastScore = score;
 
@@ -78,10 +78,10 @@ public class UIManager : MonoBehaviour
 
     private System.Collections.IEnumerator PunchScoreTextCoroutine()
     {
-        RectTransform scoreTransform = scoreText.rectTransform;
+        RectTransform scoreTransform = _scoreText.rectTransform;
         Vector3 baseScale = _scoreTextBaseScale;
-        Vector3 punchScale = baseScale * scorePunchScale;
-        float halfDuration = Mathf.Max(0.01f, scorePunchDuration * 0.5f);
+        Vector3 punchScale = baseScale * _scorePunchScale;
+        float halfDuration = Mathf.Max(0.01f, _scorePunchDuration * 0.5f);
 
         yield return LerpScale(scoreTransform, baseScale, punchScale, halfDuration);
         yield return LerpScale(scoreTransform, punchScale, baseScale, halfDuration);
@@ -111,9 +111,9 @@ public class UIManager : MonoBehaviour
             _scorePunchCoroutine = null;
         }
 
-        if (scoreText != null)
+        if (_scoreText != null)
         {
-            scoreText.rectTransform.localScale = _scoreTextBaseScale;
+            _scoreText.rectTransform.localScale = _scoreTextBaseScale;
         }
     }
 }
